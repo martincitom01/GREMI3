@@ -199,7 +199,7 @@ const AceptarInvitacion = () => {
               <Train size={40} color="white" />
             </div>
             <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a5f', marginBottom: '0.5rem' }}>
-              Invitación Recibida
+              {invitation?.user_exists ? 'Tus Credenciales de Acceso' : 'Invitación Recibida'}
             </h1>
             <p style={{ color: '#64748b', fontSize: '1rem' }}>Sistema de Reclamos Gremiales UTA</p>
           </div>
