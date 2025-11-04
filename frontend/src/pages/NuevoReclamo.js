@@ -155,6 +155,7 @@ const NuevoReclamo = () => {
               value={formData.linea}
               onChange={handleChange}
               required
+              disabled={user?.role === 'EMISOR_RECLAMO'}
               data-testid="select-linea"
             >
               <option value="">Seleccione una línea</option>
@@ -162,6 +163,11 @@ const NuevoReclamo = () => {
                 <option key={linea} value={linea}>{linea === 'Premetro' ? 'Premetro' : `Línea ${linea}`}</option>
               ))}
             </select>
+            {user?.role === 'EMISOR_RECLAMO' && (
+              <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.5rem' }}>
+                Tu línea asignada: <strong>Línea {user?.linea_asignada}</strong>
+              </p>
+            )}
           </div>
 
           <div className="form-group">
