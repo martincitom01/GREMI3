@@ -143,14 +143,26 @@ const Dashboard = () => {
                 Usuarios
               </button>
             )}
-            <button 
-              className="nav-button" 
-              onClick={handleLogout}
-              data-testid="logout-btn"
-            >
-              <LogOut size={16} style={{display: 'inline', marginRight: '4px'}} />
-              Salir
-            </button>
+            {user?.role === 'ADMIN' ? (
+              <button 
+                className="nav-button" 
+                onClick={() => navigate('/emisor-login')}
+                data-testid="emisor-access-btn"
+                style={{ background: 'rgba(74, 144, 226, 0.2)', borderColor: '#4a90e2' }}
+              >
+                <LogOut size={16} style={{display: 'inline', marginRight: '4px', transform: 'scaleX(-1)' }} />
+                Acceso Emisores
+              </button>
+            ) : (
+              <button 
+                className="nav-button" 
+                onClick={handleLogout}
+                data-testid="logout-btn"
+              >
+                <LogOut size={16} style={{display: 'inline', marginRight: '4px'}} />
+                Salir
+              </button>
+            )}
           </div>
         </div>
       </header>
