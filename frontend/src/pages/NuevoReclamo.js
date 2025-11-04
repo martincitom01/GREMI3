@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '@/context/AuthContext';
 import { ArrowLeft, Upload, X } from 'lucide-react';
 import { toast } from 'sonner';
 
