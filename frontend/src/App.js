@@ -56,13 +56,13 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-            <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/emisor-login" element={<PublicRoute><Login /></PublicRoute>} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="/nuevo-reclamo" element={<ProtectedRoute><NuevoReclamo /></ProtectedRoute>} />
-            <Route path="/administracion" element={<ProtectedRoute><Administracion /></ProtectedRoute>} />
+            <Route path="/administracion" element={<Administracion />} />
             <Route path="/reclamo/:id" element={<ProtectedRoute><DetalleReclamo /></ProtectedRoute>} />
-            <Route path="/estadisticas" element={<ProtectedRoute><Estadisticas /></ProtectedRoute>} />
-            <Route path="/usuarios" element={<ProtectedRoute adminOnly={true}><GestionUsuarios /></ProtectedRoute>} />
+            <Route path="/estadisticas" element={<Estadisticas />} />
+            <Route path="/usuarios" element={<GestionUsuarios />} />
           </Routes>
           <Toaster position="top-right" richColors />
         </AuthProvider>
