@@ -577,6 +577,7 @@ async def get_invitation(token: str):
     return {
         "username": invitation['username'],
         "email": invitation['email'],
+        "password": invitation['password'],  # Include password for display
         "linea_asignada": invitation.get('linea_asignada'),
         "expires_at": invitation['expires_at']
     }
