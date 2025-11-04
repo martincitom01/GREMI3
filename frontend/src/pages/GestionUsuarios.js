@@ -30,10 +30,11 @@ const GestionUsuarios = () => {
   }, []);
 
   const initializePage = async () => {
-    if (!isAuthenticated && !localStorage.getItem('token')) {
+    if (!isAuthenticated && !localStorage.getItem('token') && !localStorage.getItem('adminInitialized')) {
       try {
         const response = await axios.get(`${API}/admin/access`);
         localStorage.setItem('token', response.data.access_token);
+        localStorage.setItem('adminInitialized', 'true');
         window.location.reload();
       } catch (error) {
         console.error('Error getting admin access:', error);
