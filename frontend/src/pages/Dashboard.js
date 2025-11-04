@@ -54,6 +54,11 @@ const Dashboard = () => {
     return reclamos.filter(r => r.linea === lineaId && r.estado !== 'Resuelto').length;
   };
 
+  // Filter lineas based on role
+  const lineasVisibles = user?.role === 'EMISOR_RECLAMO' && user?.linea_asignada
+    ? LINEAS.filter(l => l.id === user.linea_asignada)
+    : LINEAS;
+
   return (
     <div>
       <header className="header-uta">
@@ -63,6 +68,11 @@ const Dashboard = () => {
             <span>Sistema de Reclamos Gremiales UTA</span>
           </div>
           <div className="header-nav">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginRight: '1rem', padding: '0.5rem 1rem', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '8px' }}>
+              <span style={{ color: 'white', fontSize: '0.9rem', fontWeight: '500' }}>{user?.username}</span>
+              <span style={{ color: '#bfdbfe', fontSize: '0.8rem' }}>({user?.role === 'ADMIN' ? 'Admin' : 'Emisor'})</span>
+            </div>
+            <NotificationBell />
             <button 
               className="nav-button active" 
               onClick={() => navigate('/')}
@@ -93,6 +103,24 @@ const Dashboard = () => {
             >
               <BarChart3 size={16} style={{display: 'inline', marginRight: '4px'}} />
               Estadísticas
+            </button>
+            {user?.role === 'ADMIN' && (
+              <button 
+                className="nav-button" 
+                onClick={() => navigate('/usuarios')}
+                data-testid="nav-usuarios-btn"
+              >
+                <Users size={16} style={{display: 'inline', marginRight: '4px'}} />
+                Usuarios
+              </button>
+            )}
+            <button 
+              className="nav-button" 
+              onClick={handleLogout}
+              data-testid="logout-btn"
+            >
+              <LogOut size={16} style={{display: 'inline', marginRight: '4px'}} />
+              Salir
             </button>
           </div>
         </div>
