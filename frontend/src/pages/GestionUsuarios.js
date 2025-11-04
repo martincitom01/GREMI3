@@ -319,6 +319,7 @@ const GestionUsuarios = () => {
                 </tbody>
               </table>
             </div>
+            </div>
           </div>
         )}
       </div>
