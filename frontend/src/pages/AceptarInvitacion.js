@@ -81,6 +81,89 @@ const AceptarInvitacion = () => {
     );
   }
 
+  // Success screen after accepting invitation
+  if (accepted && credentials) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%)' }}>
+        <div style={{ width: '100%', maxWidth: '600px', padding: '2rem' }}>
+          <div style={{ background: 'white', borderRadius: '16px', padding: '3rem', boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)' }}>
+            <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '100px', height: '100px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', borderRadius: '50%', marginBottom: '1.5rem', boxShadow: '0 8px 20px rgba(16, 185, 129, 0.4)' }}>
+                <CheckCircle size={60} color="white" />
+              </div>
+              <h1 style={{ fontSize: '2.25rem', fontWeight: '700', color: '#059669', marginBottom: '0.5rem' }}>
+                ¡Cuenta Activada!
+              </h1>
+              <p style={{ color: '#64748b', fontSize: '1.1rem' }}>Tu cuenta ha sido creada exitosamente</p>
+            </div>
+
+            <div style={{ background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)', borderRadius: '12px', padding: '2rem', marginBottom: '2rem', border: '2px solid #3b82f6' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1e40af', marginBottom: '1.5rem', textAlign: 'center' }}>
+                Tus Credenciales de Acceso
+              </h3>
+              
+              <div style={{ background: 'white', borderRadius: '10px', padding: '1.5rem', marginBottom: '1rem' }}>
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem', fontWeight: '500' }}>
+                    👤 Usuario
+                  </div>
+                  <div style={{ 
+                    fontSize: '1.25rem', 
+                    fontWeight: '700', 
+                    color: '#1e293b', 
+                    fontFamily: 'monospace',
+                    background: '#f8fafc',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '8px',
+                    border: '2px solid #e2e8f0',
+                    letterSpacing: '1px'
+                  }}>
+                    {credentials.username}
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem', fontWeight: '500' }}>
+                    📧 Email
+                  </div>
+                  <div style={{ fontSize: '1rem', color: '#475569', fontWeight: '500' }}>
+                    {credentials.email}
+                  </div>
+                </div>
+
+                {credentials.linea && (
+                  <div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem', fontWeight: '500' }}>
+                      🚂 Línea Asignada
+                    </div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e3a5f' }}>
+                      Línea {credentials.linea}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div style={{ background: '#fef3c7', borderRadius: '10px', padding: '1.25rem', marginBottom: '2rem', border: '2px solid #fbbf24' }}>
+              <p style={{ fontSize: '0.95rem', color: '#92400e', margin: 0, textAlign: 'center', lineHeight: '1.6' }}>
+                <strong>⚠️ Importante:</strong> Guarda estas credenciales. Las necesitarás para iniciar sesión en el sistema.
+              </p>
+            </div>
+
+            <button
+              className="btn-primary"
+              onClick={handleGoToLogin}
+              style={{ width: '100%', fontSize: '1.1rem', padding: '1rem' }}
+              data-testid="go-to-login-btn"
+            >
+              Continuar al Login →
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%)' }}>
       <div style={{ width: '100%', maxWidth: '600px', padding: '2rem' }}>
