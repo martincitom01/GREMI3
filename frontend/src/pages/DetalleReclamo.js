@@ -175,13 +175,15 @@ const DetalleReclamo = () => {
                 {reclamo.estado}
               </span>
             </div>
-            <button 
-              className="btn-primary" 
-              onClick={() => setEditando(!editando)}
-              data-testid="toggle-edit-btn"
-            >
-              {editando ? 'Cancelar' : 'Editar'}
-            </button>
+            {user?.role === 'ADMIN' && (
+              <button 
+                className="btn-primary" 
+                onClick={() => setEditando(!editando)}
+                data-testid="toggle-edit-btn"
+              >
+                {editando ? 'Cancelar' : 'Editar'}
+              </button>
+            )}
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
