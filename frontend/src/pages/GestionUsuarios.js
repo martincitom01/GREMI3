@@ -17,6 +17,13 @@ const GestionUsuarios = () => {
   const { getAuthHeaders, user: currentUser } = useAuth();
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: ''
+  });
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     cargarUsuarios();
@@ -33,6 +40,48 @@ const GestionUsuarios = () => {
       toast.error('Error al cargar usuarios');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCreateUser = async (e) => {
+    e.preventDefault();
+    
+    if (formData.password.length < 6) {
+      toast.error('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    setCreating(true);
+    try {
+      await axios.post(`${API}/users/create`, formData, {
+        headers: getAuthHeaders()
+      });
+      toast.success(`Usuario ${formData.username} creado exitosamente`);
+      setFormData({ username: '', email: '', password: '' });
+      setShowCreateForm(false);
+      cargarUsuarios();
+    } catch (error) {
+      console.error('Error creando usuario:', error);
+      toast.error(error.response?.data?.detail || 'Error al crear usuario');
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleDeleteUser = async (userId, username) => {
+    if (!window.confirm(`¿Está seguro de eliminar al usuario ${username}?`)) {
+      return;
+    }
+
+    try {
+      await axios.delete(`${API}/users/${userId}`, {
+        headers: getAuthHeaders()
+      });
+      toast.success('Usuario eliminado');
+      cargarUsuarios();
+    } catch (error) {
+      console.error('Error eliminando usuario:', error);
+      toast.error(error.response?.data?.detail || 'Error al eliminar usuario');
     }
   };
 
