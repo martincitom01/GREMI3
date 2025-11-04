@@ -223,6 +223,20 @@ const AceptarInvitacion = () => {
                 </div>
               </div>
 
+              {invitation.password && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <div style={{ width: '40px', height: '40px', background: 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fbbf24' }}>
+                    🔑
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '0.25rem' }}>Contraseña</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', fontFamily: 'monospace', background: '#fef3c7', padding: '0.5rem 0.75rem', borderRadius: '6px', border: '2px solid #fbbf24' }}>
+                      {invitation.password}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <div style={{ width: '40px', height: '40px', background: 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3b82f6' }}>
                   <Mail size={20} />
