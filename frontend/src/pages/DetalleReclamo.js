@@ -63,15 +63,17 @@ const DetalleReclamo = () => {
 
   const handleAgregarComentario = async (e) => {
     e.preventDefault();
-    if (!nuevoComentario.trim() || !autor.trim()) {
-      toast.error('Complete el comentario y el autor');
+    if (!nuevoComentario.trim()) {
+      toast.error('Complete el comentario');
       return;
     }
 
     try {
       await axios.post(`${API}/reclamos/${id}/comentarios`, {
         text: nuevoComentario,
-        author: autor
+        author: autor || user?.username
+      }, {
+        headers: getAuthHeaders()
       });
       setNuevoComentario('');
       toast.success('Comentario agregado');
@@ -92,6 +94,7 @@ const DetalleReclamo = () => {
     try {
       await axios.post(`${API}/reclamos/${id}/archivos`, formData, {
         headers: {
+          ...getAuthHeaders(),
           'Content-Type': 'multipart/form-data'
         }
       });
@@ -105,13 +108,15 @@ const DetalleReclamo = () => {
 
   const handleActualizar = async () => {
     try {
-      await axios.patch(`${API}/reclamos/${id}`, formEdit);
+      await axios.patch(`${API}/reclamos/${id}`, formEdit, {
+        headers: getAuthHeaders()
+      });
       toast.success('Reclamo actualizado');
       setEditando(false);
       cargarReclamo();
     } catch (error) {
       console.error('Error actualizando reclamo:', error);
-      toast.error('Error al actualizar');
+      toast.error(error.response?.data?.detail || 'Error al actualizar');
     }
   };
 
