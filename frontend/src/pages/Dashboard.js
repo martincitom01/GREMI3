@@ -141,6 +141,34 @@ const Dashboard = () => {
           {user?.role === 'ADMIN' ? 'Seleccione una línea para ver los reclamos gremiales' : 'Tus reclamos'}
         </p>
 
+        {/* Tarjeta de credenciales - Ayuda memoria */}
+        <div style={{ 
+          background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)', 
+          border: '2px solid #3b82f6', 
+          borderRadius: '12px', 
+          padding: '1.25rem 1.5rem', 
+          marginBottom: '2rem',
+          boxShadow: '0 2px 8px rgba(59, 130, 246, 0.1)'
+        }} data-testid="credentials-card">
+          <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#1e40af', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '1.2rem' }}>🔐</span>
+            Tus Credenciales de Acceso
+          </h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '0.75rem 1.5rem', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.9rem', color: '#475569', fontWeight: '500' }}>Usuario:</span>
+            <span style={{ fontSize: '0.95rem', color: '#1e293b', fontWeight: '600', fontFamily: 'monospace', background: 'white', padding: '0.4rem 0.75rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} data-testid="user-username">
+              {user?.username}
+            </span>
+            <span style={{ fontSize: '0.9rem', color: '#475569', fontWeight: '500' }}>Contraseña:</span>
+            <span style={{ fontSize: '0.85rem', color: '#64748b', fontStyle: 'italic' }}>
+              La contraseña que te fue asignada por el administrador
+            </span>
+          </div>
+          <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.75rem', fontStyle: 'italic' }}>
+            💡 Guarda estas credenciales en un lugar seguro
+          </p>
+        </div>
+
         {loading ? (
           <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>Cargando...</div>
         ) : (
