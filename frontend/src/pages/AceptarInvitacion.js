@@ -43,9 +43,14 @@ const AceptarInvitacion = () => {
   const handleAccept = async () => {
     setAccepting(true);
     try {
-      await axios.post(`${API}/invitations/${token}/accept`);
+      const response = await axios.post(`${API}/invitations/${token}/accept`);
       setAccepted(true);
-      toast.success('¡Cuenta activada exitosamente!');
+      
+      if (credentials.userExists) {
+        toast.success('Ingresando al sistema...');
+      } else {
+        toast.success('¡Cuenta activada exitosamente!');
+      }
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Error al activar la cuenta');
       setAccepting(false);
