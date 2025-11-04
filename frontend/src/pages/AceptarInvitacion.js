@@ -251,26 +251,52 @@ const AceptarInvitacion = () => {
             </div>
           </div>
 
-          <div style={{ background: '#fef3c7', borderRadius: '10px', padding: '1rem 1.25rem', marginBottom: '2rem', border: '2px solid #fbbf24' }}>
-            <p style={{ fontSize: '0.9rem', color: '#92400e', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Clock size={18} />
-              <span>Esta invitación expira en 7 días</span>
-            </p>
-          </div>
+          {!invitation.user_exists ? (
+            <>
+              <div style={{ background: '#fef3c7', borderRadius: '10px', padding: '1rem 1.25rem', marginBottom: '2rem', border: '2px solid #fbbf24' }}>
+                <p style={{ fontSize: '0.9rem', color: '#92400e', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Clock size={18} />
+                  <span>Esta invitación expira en 7 días</span>
+                </p>
+              </div>
 
-          <button
-            className="btn-primary"
-            onClick={handleAccept}
-            disabled={accepting}
-            style={{ width: '100%', fontSize: '1.1rem', padding: '1rem' }}
-            data-testid="accept-invitation-btn"
-          >
-            {accepting ? 'Activando cuenta...' : '✓ Aceptar Invitación y Activar Cuenta'}
-          </button>
+              <button
+                className="btn-primary"
+                onClick={handleAccept}
+                disabled={accepting}
+                style={{ width: '100%', fontSize: '1.1rem', padding: '1rem' }}
+                data-testid="accept-invitation-btn"
+              >
+                {accepting ? 'Activando cuenta...' : '✓ Aceptar Invitación y Activar Cuenta'}
+              </button>
 
-          <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#64748b', marginTop: '1.5rem' }}>
-            Al aceptar, podrás acceder al sistema con tus credenciales
-          </p>
+              <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#64748b', marginTop: '1.5rem' }}>
+                Al aceptar, podrás acceder al sistema con tus credenciales
+              </p>
+            </>
+          ) : (
+            <>
+              <div style={{ background: '#d1fae5', borderRadius: '10px', padding: '1rem 1.25rem', marginBottom: '2rem', border: '2px solid #10b981' }}>
+                <p style={{ fontSize: '0.9rem', color: '#065f46', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <CheckCircle size={18} />
+                  <span><strong>Tu cuenta ya está activa.</strong> Usa este link para recordar tus credenciales.</span>
+                </p>
+              </div>
+
+              <button
+                className="btn-primary"
+                onClick={handleGoToLogin}
+                style={{ width: '100%', fontSize: '1.1rem', padding: '1rem' }}
+                data-testid="go-login-btn"
+              >
+                Ir al Login →
+              </button>
+
+              <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#64748b', marginTop: '1.5rem' }}>
+                Usa las credenciales mostradas arriba para iniciar sesión
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>
