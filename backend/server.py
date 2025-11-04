@@ -473,7 +473,7 @@ async def subir_archivo(reclamo_id: str, file: UploadFile = File(...), current_u
     return {"message": "Archivo subido", "url": file_url}
 
 @api_router.delete("/reclamos/{reclamo_id}")
-async def eliminar_reclamo(reclamo_id: str):
+async def eliminar_reclamo(reclamo_id: str, current_admin: dict = Depends(get_current_admin)):
     result = await db.reclamos.delete_one({"id": reclamo_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Reclamo no encontrado")
