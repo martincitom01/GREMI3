@@ -109,6 +109,8 @@ class Reclamo(BaseModel):
     estado: str = "Pendiente"
     responsable: Optional[str] = None
     comentarios: List[dict] = []
+    creator_id: Optional[str] = None  # ID del usuario que creó el reclamo
+    creator_username: Optional[str] = None
     fecha_creacion: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     fecha_cierre: Optional[datetime] = None
     solucion: Optional[str] = None
