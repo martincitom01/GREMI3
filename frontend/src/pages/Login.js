@@ -80,11 +80,8 @@ const Login = () => {
             </button>
           </form>
 
-          <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.95rem' }}>
-            <span style={{ color: '#64748b' }}>¿No tienes cuenta? </span>
-            <Link to="/register" style={{ color: '#1e3a5f', fontWeight: '600', textDecoration: 'none' }} data-testid="register-link">
-              Regístrate aquí
-            </Link>
+          <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.85rem', color: '#64748b' }}>
+            Los usuarios son creados por el administrador
           </div>
         </div>
       </div>
