@@ -516,6 +516,135 @@ async def get_unread_count(current_user: dict = Depends(get_current_user)):
     count = await db.notifications.count_documents({"user_id": current_user["id"], "is_read": False})
     return {"count": count}
 
+# Invitation endpoints (Admin only)
+@api_router.post("/invitations/create", response_model=InvitationResponse)
+async def create_invitation(invitation_data: InvitationCreate, current_admin: dict = Depends(get_current_admin)):
+    # Check if username already exists
+    existing_user = await db.users.find_one({"username": invitation_data.username})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already exists")
+    
+    # Check if email already exists
+    existing_email = await db.users.find_one({"email": invitation_data.email})
+    if existing_email:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Create invitation
+    invitation = Invitation(
+        username=invitation_data.username,
+        email=invitation_data.email,
+        password=invitation_data.password,  # Store plain password for invitation
+        linea_asignada=invitation_data.linea_asignada
+    )
+    
+    doc = invitation.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    doc['expires_at'] = doc['expires_at'].isoformat()
+    
+    await db.invitations.insert_one(doc)
+    
+    # Generate invitation link
+    base_url = os.environ.get('FRONTEND_URL', 'https://reclamos-metro.preview.emergentagent.com')
+    invitation_link = f"{base_url}/invitacion/{invitation.token}"
+    
+    return InvitationResponse(
+        id=invitation.id,
+        token=invitation.token,
+        username=invitation.username,
+        email=invitation.email,
+        linea_asignada=invitation.linea_asignada,
+        invitation_link=invitation_link,
+        expires_at=invitation.expires_at
+    )
+
+@api_router.get("/invitations/{token}")
+async def get_invitation(token: str):
+    invitation = await db.invitations.find_one({"token": token}, {"_id": 0})
+    if not invitation:
+        raise HTTPException(status_code=404, detail="Invitation not found")
+    
+    if invitation['used']:
+        raise HTTPException(status_code=400, detail="Invitation already used")
+    
+    # Check expiration
+    expires_at = invitation['expires_at']
+    if isinstance(expires_at, str):
+        expires_at = datetime.fromisoformat(expires_at)
+    
+    if datetime.now(timezone.utc) > expires_at:
+        raise HTTPException(status_code=400, detail="Invitation expired")
+    
+    return {
+        "username": invitation['username'],
+        "email": invitation['email'],
+        "linea_asignada": invitation.get('linea_asignada'),
+        "expires_at": invitation['expires_at']
+    }
+
+@api_router.post("/invitations/{token}/accept", response_model=TokenResponse)
+async def accept_invitation(token: str):
+    invitation = await db.invitations.find_one({"token": token}, {"_id": 0})
+    if not invitation:
+        raise HTTPException(status_code=404, detail="Invitation not found")
+    
+    if invitation['used']:
+        raise HTTPException(status_code=400, detail="Invitation already used")
+    
+    # Check expiration
+    expires_at = invitation['expires_at']
+    if isinstance(expires_at, str):
+        expires_at = datetime.fromisoformat(expires_at)
+    
+    if datetime.now(timezone.utc) > expires_at:
+        raise HTTPException(status_code=400, detail="Invitation expired")
+    
+    # Create user
+    user = User(
+        username=invitation['username'],
+        email=invitation['email'],
+        password_hash=get_password_hash(invitation['password']),
+        role="EMISOR_RECLAMO",
+        linea_asignada=invitation.get('linea_asignada')
+    )
+    
+    doc = user.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.users.insert_one(doc)
+    
+    # Mark invitation as used
+    await db.invitations.update_one({"token": token}, {"$set": {"used": True}})
+    
+    # Create access token
+    access_token = create_access_token(data={"sub": user.id})
+    
+    user_response = UserResponse(
+        id=user.id,
+        username=user.username,
+        email=user.email,
+        role=user.role,
+        linea_asignada=user.linea_asignada,
+        created_at=user.created_at
+    )
+    
+    return TokenResponse(
+        access_token=access_token,
+        token_type="bearer",
+        user=user_response
+    )
+
+@api_router.get("/invitations")
+async def get_invitations(current_admin: dict = Depends(get_current_admin)):
+    invitations = await db.invitations.find({}, {"_id": 0}).sort('created_at', -1).to_list(100)
+    
+    for inv in invitations:
+        if isinstance(inv['created_at'], str):
+            inv['created_at'] = datetime.fromisoformat(inv['created_at'])
+        if isinstance(inv['expires_at'], str):
+            inv['expires_at'] = datetime.fromisoformat(inv['expires_at'])
+    
+    return invitations
+
 # User management endpoints (Admin only)
 @api_router.post("/users/create", response_model=UserResponse)
 async def create_user(user_data: UserCreate, current_admin: dict = Depends(get_current_admin)):
