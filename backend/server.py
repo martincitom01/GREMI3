@@ -563,9 +563,6 @@ async def get_invitation(token: str):
     if not invitation:
         raise HTTPException(status_code=404, detail="Invitation not found")
     
-    if invitation['used']:
-        raise HTTPException(status_code=400, detail="Invitation already used")
-    
     # Check expiration
     expires_at = invitation['expires_at']
     if isinstance(expires_at, str):
@@ -574,12 +571,17 @@ async def get_invitation(token: str):
     if datetime.now(timezone.utc) > expires_at:
         raise HTTPException(status_code=400, detail="Invitation expired")
     
+    # Check if user already exists
+    existing_user = await db.users.find_one({"username": invitation['username']})
+    user_exists = existing_user is not None
+    
     return {
         "username": invitation['username'],
         "email": invitation['email'],
         "password": invitation['password'],  # Include password for display
         "linea_asignada": invitation.get('linea_asignada'),
-        "expires_at": invitation['expires_at']
+        "expires_at": invitation['expires_at'],
+        "user_exists": user_exists  # Indicate if user already registered
     }
 
 @api_router.post("/invitations/{token}/accept", response_model=TokenResponse)
