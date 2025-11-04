@@ -207,6 +207,86 @@ def generar_numero_reclamo(linea: str, categoria: str, contador: int) -> str:
 async def root():
     return {"message": "Sistema de Reclamos Gremiales UTA"}
 
+# Authentication endpoints
+@api_router.post("/auth/register", response_model=TokenResponse)
+async def register(user_data: UserCreate):
+    # Check if username exists
+    existing_user = await db.users.find_one({"username": user_data.username})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already registered")
+    
+    # Check if email exists
+    existing_email = await db.users.find_one({"email": user_data.email})
+    if existing_email:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Create user
+    user = User(
+        username=user_data.username,
+        email=user_data.email,
+        password_hash=get_password_hash(user_data.password),
+        role="EMISOR_RECLAMO"
+    )
+    
+    doc = user.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.users.insert_one(doc)
+    
+    # Create access token
+    access_token = create_access_token(data={"sub": user.id})
+    
+    user_response = UserResponse(
+        id=user.id,
+        username=user.username,
+        email=user.email,
+        role=user.role,
+        linea_asignada=user.linea_asignada,
+        created_at=user.created_at
+    )
+    
+    return TokenResponse(
+        access_token=access_token,
+        token_type="bearer",
+        user=user_response
+    )
+
+@api_router.post("/auth/login", response_model=TokenResponse)
+async def login(credentials: UserLogin):
+    user = await db.users.find_one({"username": credentials.username}, {"_id": 0})
+    if not user or not verify_password(credentials.password, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Incorrect username or password")
+    
+    if not user.get("is_active", True):
+        raise HTTPException(status_code=403, detail="User account is disabled")
+    
+    access_token = create_access_token(data={"sub": user["id"]})
+    
+    if isinstance(user['created_at'], str):
+        user['created_at'] = datetime.fromisoformat(user['created_at'])
+    
+    user_response = UserResponse(
+        id=user["id"],
+        username=user["username"],
+        email=user["email"],
+        role=user["role"],
+        linea_asignada=user.get("linea_asignada"),
+        created_at=user["created_at"]
+    )
+    
+    return TokenResponse(
+        access_token=access_token,
+        token_type="bearer",
+        user=user_response
+    )
+
+@api_router.get("/auth/me", response_model=UserResponse)
+async def get_me(current_user: dict = Depends(get_current_user)):
+    if isinstance(current_user['created_at'], str):
+        current_user['created_at'] = datetime.fromisoformat(current_user['created_at'])
+    
+    return UserResponse(**current_user)
+
 @api_router.post("/reclamos", response_model=Reclamo)
 async def crear_reclamo(input: ReclamoCreate):
     # Get count for numero generation
