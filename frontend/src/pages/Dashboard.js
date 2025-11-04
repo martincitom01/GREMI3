@@ -71,6 +71,7 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('isAdmin');
+    localStorage.removeItem('adminInitialized');
     logout();
     navigate('/emisor-login');
   };
