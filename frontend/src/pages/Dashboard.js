@@ -70,8 +70,9 @@ const Dashboard = () => {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('isAdmin');
     logout();
-    navigate('/login');
+    navigate('/emisor-login');
   };
 
   const contarReclamosPorLinea = (lineaId) => {
