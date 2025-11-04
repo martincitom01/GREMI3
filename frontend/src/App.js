@@ -58,6 +58,7 @@ function App() {
         <AuthProvider>
           <Routes>
             <Route path="/emisor-login" element={<PublicRoute><Login /></PublicRoute>} />
+            <Route path="/invitacion/:token" element={<AceptarInvitacion />} />
             <Route path="/" element={<Dashboard />} />
             <Route path="/nuevo-reclamo" element={<ProtectedRoute><NuevoReclamo /></ProtectedRoute>} />
             <Route path="/administracion" element={<Administracion />} />
