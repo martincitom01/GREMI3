@@ -58,7 +58,6 @@ function App() {
         <AuthProvider>
           <Routes>
             <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-            <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
             <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/nuevo-reclamo" element={<ProtectedRoute><NuevoReclamo /></ProtectedRoute>} />
             <Route path="/administracion" element={<ProtectedRoute><Administracion /></ProtectedRoute>} />
