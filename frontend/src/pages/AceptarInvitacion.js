@@ -125,6 +125,25 @@ const AceptarInvitacion = () => {
 
                 <div style={{ marginBottom: '1.25rem' }}>
                   <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem', fontWeight: '500' }}>
+                    🔑 Contraseña
+                  </div>
+                  <div style={{ 
+                    fontSize: '1.25rem', 
+                    fontWeight: '700', 
+                    color: '#1e293b', 
+                    fontFamily: 'monospace',
+                    background: '#fef3c7',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '8px',
+                    border: '2px solid #fbbf24',
+                    letterSpacing: '1px'
+                  }}>
+                    {credentials.password}
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: '1.25rem' }}>
+                  <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem', fontWeight: '500' }}>
                     📧 Email
                   </div>
                   <div style={{ fontSize: '1rem', color: '#475569', fontWeight: '500' }}>
