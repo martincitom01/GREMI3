@@ -284,12 +284,35 @@ const GestionUsuarios = () => {
                         {formatearFecha(usuario.created_at)}
                       </td>
                       <td style={{ padding: '1rem' }}>
-                        {usuario.linea_asignada && usuario.role === 'EMISOR_RECLAMO' && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#059669' }}>
-                            <Check size={16} />
-                            <span style={{ fontSize: '0.85rem', fontWeight: '500' }}>Configurado</span>
-                          </div>
-                        )}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                          {usuario.linea_asignada && usuario.role === 'EMISOR_RECLAMO' && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#059669' }}>
+                              <Check size={16} />
+                              <span style={{ fontSize: '0.85rem', fontWeight: '500' }}>Configurado</span>
+                            </div>
+                          )}
+                          {usuario.id !== currentUser?.id && (
+                            <button
+                              onClick={() => handleDeleteUser(usuario.id, usuario.username)}
+                              style={{
+                                background: '#fee2e2',
+                                color: '#991b1b',
+                                border: 'none',
+                                padding: '0.4rem 0.75rem',
+                                borderRadius: '6px',
+                                fontSize: '0.85rem',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s'
+                              }}
+                              onMouseEnter={(e) => e.currentTarget.style.background = '#fecaca'}
+                              onMouseLeave={(e) => e.currentTarget.style.background = '#fee2e2'}
+                              data-testid={`delete-user-${usuario.id}`}
+                            >
+                              Eliminar
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
