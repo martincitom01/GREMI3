@@ -209,6 +209,28 @@ async def root():
 
 # Authentication endpoints (auto-registro eliminado)
 
+@api_router.get("/admin/access", response_model=TokenResponse)
+async def admin_access():
+    """Acceso directo para administrador sin credenciales"""
+    # Buscar usuario admin
+    admin_user = await db.users.find_one({"role": "ADMIN"}, {"_id": 0, "password_hash": 0})
+    if not admin_user:
+        raise HTTPException(status_code=404, detail="Admin user not found")
+    
+    # Create access token
+    access_token = create_access_token(data={"sub": admin_user["id"]})
+    
+    if isinstance(admin_user['created_at'], str):
+        admin_user['created_at'] = datetime.fromisoformat(admin_user['created_at'])
+    
+    user_response = UserResponse(**admin_user)
+    
+    return TokenResponse(
+        access_token=access_token,
+        token_type="bearer",
+        user=user_response
+    )
+
 @api_router.post("/auth/login", response_model=TokenResponse)
 async def login(credentials: UserLogin):
     user = await db.users.find_one({"username": credentials.username}, {"_id": 0})
