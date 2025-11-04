@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '@/context/AuthContext';
 import { ArrowLeft, Upload, Send, FileText, Calendar, User } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
