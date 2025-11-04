@@ -320,10 +320,20 @@ async def obtener_reclamos(
     categoria: Optional[str] = None,
     estado: Optional[str] = None,
     responsable: Optional[str] = None,
-    search: Optional[str] = None
+    search: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
 ):
     query = {}
-    if linea:
+    
+    # Filter by role
+    if current_user["role"] == "EMISOR_RECLAMO":
+        # Only see own reclamos from assigned linea
+        query['creator_id'] = current_user["id"]
+        if current_user.get("linea_asignada"):
+            query['linea'] = current_user["linea_asignada"]
+    
+    # Apply additional filters
+    if linea and current_user["role"] == "ADMIN":
         query['linea'] = linea
     if categoria:
         query['categoria'] = categoria
