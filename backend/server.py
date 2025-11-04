@@ -535,7 +535,15 @@ async def change_user_role(user_id: str, role: str, current_admin: dict = Depend
 
 @api_router.get("/estadisticas", response_model=EstadisticasResponse)
 async def obtener_estadisticas(current_user: dict = Depends(get_current_user)):
-    reclamos = await db.reclamos.find({}, {"_id": 0}).to_list(10000)
+    query = {}
+    
+    # Filter by role
+    if current_user["role"] == "EMISOR_RECLAMO":
+        query['creator_id'] = current_user["id"]
+        if current_user.get("linea_asignada"):
+            query['linea'] = current_user["linea_asignada"]
+    
+    reclamos = await db.reclamos.find(query, {"_id": 0}).to_list(10000)
     
     total = len(reclamos)
     
