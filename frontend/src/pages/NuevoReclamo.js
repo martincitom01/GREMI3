@@ -21,8 +21,9 @@ const CATEGORIAS = [
 
 const NuevoReclamo = () => {
   const navigate = useNavigate();
+  const { user, getAuthHeaders } = useAuth();
   const [formData, setFormData] = useState({
-    linea: '',
+    linea: user?.role === 'EMISOR_RECLAMO' ? (user?.linea_asignada || '') : '',
     categoria: '',
     sector_estacion: '',
     descripcion: ''
@@ -30,6 +31,34 @@ const NuevoReclamo = () => {
   const [archivos, setArchivos] = useState([]);
   const [dragOver, setDragOver] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  // Check if emisor has line assigned
+  if (user?.role === 'EMISOR_RECLAMO' && !user?.linea_asignada) {
+    return (
+      <div>
+        <header className="header-uta">
+          <div className="header-content">
+            <div className="header-title">Nuevo Reclamo Gremial</div>
+            <button className="nav-button" onClick={() => navigate('/')}>
+              <ArrowLeft size={16} style={{display: 'inline', marginRight: '4px'}} />
+              Volver
+            </button>
+          </div>
+        </header>
+        <div className="page-container">
+          <div className="form-container">
+            <div style={{ textAlign: 'center', padding: '2rem' }}>
+              <h2 style={{ color: '#1e3a5f', marginBottom: '1rem' }}>No puedes crear reclamos</h2>
+              <p style={{ color: '#64748b' }}>Tu cuenta no tiene una línea asignada. Contacta al administrador.</p>
+              <button className="btn-primary" onClick={() => navigate('/')} style={{ marginTop: '1.5rem' }}>
+                Volver al Dashboard
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     setFormData({
