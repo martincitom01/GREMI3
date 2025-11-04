@@ -80,8 +80,10 @@ const Login = () => {
             </button>
           </form>
 
-          <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.85rem', color: '#64748b' }}>
-            Los usuarios son creados por el administrador
+          <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.85rem' }}>
+            <Link to="/" style={{ color: '#1e3a5f', fontWeight: '600', textDecoration: 'none' }} data-testid="admin-access-link">
+              ← Volver al Panel de Administración
+            </Link>
           </div>
         </div>
       </div>
