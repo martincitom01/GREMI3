@@ -15,10 +15,11 @@ const ESTADOS = ['Pendiente', 'En gestión', 'En negociación', 'Resuelto'];
 const DetalleReclamo = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { user, getAuthHeaders } = useAuth();
   const [reclamo, setReclamo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [nuevoComentario, setNuevoComentario] = useState('');
-  const [autor, setAutor] = useState('');
+  const [autor, setAutor] = useState(user?.username || '');
   const [editando, setEditando] = useState(false);
   const [formEdit, setFormEdit] = useState({
     estado: '',
@@ -31,9 +32,17 @@ const DetalleReclamo = () => {
     cargarReclamo();
   }, [id]);
 
+  useEffect(() => {
+    if (user?.username) {
+      setAutor(user.username);
+    }
+  }, [user]);
+
   const cargarReclamo = async () => {
     try {
-      const response = await axios.get(`${API}/reclamos/${id}`);
+      const response = await axios.get(`${API}/reclamos/${id}`, {
+        headers: getAuthHeaders()
+      });
       setReclamo(response.data);
       setFormEdit({
         estado: response.data.estado,
@@ -43,7 +52,10 @@ const DetalleReclamo = () => {
       });
     } catch (error) {
       console.error('Error cargando reclamo:', error);
-      toast.error('Error al cargar el reclamo');
+      toast.error(error.response?.data?.detail || 'Error al cargar el reclamo');
+      if (error.response?.status === 403) {
+        navigate('/');
+      }
     } finally {
       setLoading(false);
     }
