@@ -383,10 +383,14 @@ async def obtener_reclamo(reclamo_id: str, current_user: dict = Depends(get_curr
     return reclamo
 
 @api_router.patch("/reclamos/{reclamo_id}", response_model=Reclamo)
-async def actualizar_reclamo(reclamo_id: str, update: ReclamoUpdate):
+async def actualizar_reclamo(reclamo_id: str, update: ReclamoUpdate, current_user: dict = Depends(get_current_user)):
     reclamo = await db.reclamos.find_one({"id": reclamo_id}, {"_id": 0})
     if not reclamo:
         raise HTTPException(status_code=404, detail="Reclamo no encontrado")
+    
+    # Only admin can update reclamos
+    if current_user["role"] != "ADMIN":
+        raise HTTPException(status_code=403, detail="Only administrators can update claims")
     
     update_data = {k: v for k, v in update.model_dump().items() if v is not None}
     
