@@ -288,13 +288,22 @@ async def get_me(current_user: dict = Depends(get_current_user)):
     return UserResponse(**current_user)
 
 @api_router.post("/reclamos", response_model=Reclamo)
-async def crear_reclamo(input: ReclamoCreate):
+async def crear_reclamo(input: ReclamoCreate, current_user: dict = Depends(get_current_user)):
+    # Verify emisor can only create reclamos for their assigned linea
+    if current_user["role"] == "EMISOR_RECLAMO":
+        if not current_user.get("linea_asignada"):
+            raise HTTPException(status_code=403, detail="No line assigned to this user. Contact administrator.")
+        if input.linea != current_user["linea_asignada"]:
+            raise HTTPException(status_code=403, detail=f"You can only create claims for line {current_user['linea_asignada']}")
+    
     # Get count for numero generation
     count = await db.reclamos.count_documents({"linea": input.linea, "categoria": input.categoria})
     numero = generar_numero_reclamo(input.linea, input.categoria, count + 1)
     
     reclamo_dict = input.model_dump()
     reclamo_dict['numero_reclamo'] = numero
+    reclamo_dict['creator_id'] = current_user["id"]
+    reclamo_dict['creator_username'] = current_user["username"]
     reclamo_obj = Reclamo(**reclamo_dict)
     
     doc = reclamo_obj.model_dump()
