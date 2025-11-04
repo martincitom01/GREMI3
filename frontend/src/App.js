@@ -8,6 +8,7 @@ import DetalleReclamo from '@/pages/DetalleReclamo';
 import Estadisticas from '@/pages/Estadisticas';
 import Login from '@/pages/Login';
 import GestionUsuarios from '@/pages/GestionUsuarios';
+import AceptarInvitacion from '@/pages/AceptarInvitacion';
 import { Toaster } from '@/components/ui/sonner';
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
