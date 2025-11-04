@@ -31,12 +31,13 @@ const Dashboard = () => {
 
   const initializeDashboard = async () => {
     // Si no está autenticado, obtener acceso admin automático
-    if (!isAuthenticated) {
+    if (!isAuthenticated && !localStorage.getItem('adminInitialized')) {
       try {
         const response = await axios.get(`${API}/admin/access`);
         const { access_token, user: adminUser } = response.data;
         localStorage.setItem('token', access_token);
         localStorage.setItem('isAdmin', 'true');
+        localStorage.setItem('adminInitialized', 'true');
         setIsAdmin(true);
         // Recargar página para actualizar el contexto
         window.location.reload();
@@ -44,10 +45,9 @@ const Dashboard = () => {
         console.error('Error getting admin access:', error);
       }
     } else {
-      // Ya está autenticado, verificar si es admin
-      if (user?.role === 'ADMIN') {
+      // Ya está autenticado o ya se inicializó admin
+      if (user?.role === 'ADMIN' || localStorage.getItem('isAdmin') === 'true') {
         setIsAdmin(true);
-        localStorage.setItem('isAdmin', 'true');
       } else if (user?.role === 'EMISOR_RECLAMO') {
         // Es emisor, verificar si tiene línea asignada
         setIsAdmin(false);
