@@ -247,13 +247,24 @@ Usuario creado exitosamente:
                   Total de Usuarios: {usuarios.length}
                 </h2>
                 {!showCreateForm && (
-                  <button 
-                    className="btn-primary" 
-                    onClick={() => setShowCreateForm(true)}
-                    data-testid="show-create-form-btn"
-                  >
-                    + Crear Usuario
-                  </button>
+                  <div style={{ display: 'flex', gap: '1rem' }}>
+                    <button 
+                      className="btn-primary"
+                      onClick={() => setShowInvitationModal(true)}
+                      style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}
+                      data-testid="generate-invitation-btn"
+                    >
+                      <LinkIcon size={18} style={{display: 'inline', marginRight: '6px'}} />
+                      Generar Link de Invitaci\u00f3n
+                    </button>
+                    <button 
+                      className="btn-primary" 
+                      onClick={() => setShowCreateForm(true)}
+                      data-testid="show-create-form-btn"
+                    >
+                      + Crear Usuario Directo
+                    </button>
+                  </div>
                 )}
               </div>
 
