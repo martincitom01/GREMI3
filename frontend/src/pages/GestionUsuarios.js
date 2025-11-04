@@ -56,7 +56,21 @@ const GestionUsuarios = () => {
       await axios.post(`${API}/users/create`, formData, {
         headers: getAuthHeaders()
       });
+      
+      // Show success message with credentials
+      const credentialsMessage = `
+Usuario creado exitosamente:
+━━━━━━━━━━━━━━━━━━━━
+👤 Usuario: ${formData.username}
+🔑 Contraseña: ${formData.password}
+━━━━━━━━━━━━━━━━━━━━
+⚠️ Guarda estas credenciales y compártelas con el usuario de forma segura.
+      `;
+      
+      // Create a custom alert/modal
+      alert(credentialsMessage);
       toast.success(`Usuario ${formData.username} creado exitosamente`);
+      
       setFormData({ username: '', email: '', password: '' });
       setShowCreateForm(false);
       cargarUsuarios();
