@@ -409,10 +409,15 @@ async def actualizar_reclamo(reclamo_id: str, update: ReclamoUpdate):
     return updated_reclamo
 
 @api_router.post("/reclamos/{reclamo_id}/comentarios")
-async def agregar_comentario(reclamo_id: str, comment: CommentCreate):
+async def agregar_comentario(reclamo_id: str, comment: CommentCreate, current_user: dict = Depends(get_current_user)):
     reclamo = await db.reclamos.find_one({"id": reclamo_id})
     if not reclamo:
         raise HTTPException(status_code=404, detail="Reclamo no encontrado")
+    
+    # Verify access
+    if current_user["role"] == "EMISOR_RECLAMO":
+        if reclamo.get("creator_id") != current_user["id"]:
+            raise HTTPException(status_code=403, detail="Access denied")
     
     nuevo_comentario = Comment(text=comment.text, author=comment.author)
     comment_dict = nuevo_comentario.model_dump()
@@ -422,6 +427,15 @@ async def agregar_comentario(reclamo_id: str, comment: CommentCreate):
         {"id": reclamo_id},
         {"$push": {"comentarios": comment_dict}}
     )
+    
+    # Create notification if admin responded to emisor's reclamo
+    if current_user["role"] == "ADMIN" and reclamo.get("creator_id"):
+        await create_notification(
+            user_id=reclamo["creator_id"],
+            reclamo_id=reclamo_id,
+            reclamo_numero=reclamo["numero_reclamo"],
+            message=f"El administrador ha respondido a tu reclamo {reclamo['numero_reclamo']}"
+        )
     
     return {"message": "Comentario agregado", "comentario": comment_dict}
 
