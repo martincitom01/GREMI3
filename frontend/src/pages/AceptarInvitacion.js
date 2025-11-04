@@ -30,7 +30,8 @@ const AceptarInvitacion = () => {
         username: response.data.username,
         email: response.data.email,
         password: response.data.password,
-        linea: response.data.linea_asignada
+        linea: response.data.linea_asignada,
+        userExists: response.data.user_exists
       });
     } catch (error) {
       setError(error.response?.data?.detail || 'Invitación no válida o expirada');
