@@ -444,10 +444,15 @@ async def agregar_comentario(reclamo_id: str, comment: CommentCreate, current_us
     return {"message": "Comentario agregado", "comentario": comment_dict}
 
 @api_router.post("/reclamos/{reclamo_id}/archivos")
-async def subir_archivo(reclamo_id: str, file: UploadFile = File(...)):
+async def subir_archivo(reclamo_id: str, file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
     reclamo = await db.reclamos.find_one({"id": reclamo_id})
     if not reclamo:
         raise HTTPException(status_code=404, detail="Reclamo no encontrado")
+    
+    # Verify access
+    if current_user["role"] == "EMISOR_RECLAMO":
+        if reclamo.get("creator_id") != current_user["id"]:
+            raise HTTPException(status_code=403, detail="Access denied")
     
     # Save file
     file_id = str(uuid.uuid4())
