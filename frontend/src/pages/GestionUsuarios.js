@@ -142,10 +142,89 @@ const GestionUsuarios = () => {
         {loading ? (
           <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>Cargando usuarios...</div>
         ) : (
-          <div style={{ background: 'white', borderRadius: '16px', padding: '2rem', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)' }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '600', color: '#1e3a5f', marginBottom: '2rem' }}>
-              Total de Usuarios: {usuarios.length}
-            </h2>
+          <div>
+            {/* Formulario de crear usuario */}
+            {showCreateForm && (
+              <div style={{ background: 'white', borderRadius: '16px', padding: '2rem', marginBottom: '2rem', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1e3a5f', marginBottom: '1.5rem' }}>
+                  Crear Nuevo Usuario Emisor
+                </h3>
+                <form onSubmit={handleCreateUser} data-testid="create-user-form">
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                    <div className="form-group">
+                      <label className="form-label" htmlFor="new-username">Usuario *</label>
+                      <input
+                        id="new-username"
+                        type="text"
+                        className="form-input"
+                        value={formData.username}
+                        onChange={(e) => setFormData({...formData, username: e.target.value})}
+                        required
+                        data-testid="new-username"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label" htmlFor="new-email">Email *</label>
+                      <input
+                        id="new-email"
+                        type="email"
+                        className="form-input"
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        required
+                        data-testid="new-email"
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="new-password">Contraseña * (mínimo 6 caracteres)</label>
+                    <input
+                      id="new-password"
+                      type="text"
+                      className="form-input"
+                      value={formData.password}
+                      onChange={(e) => setFormData({...formData, password: e.target.value})}
+                      required
+                      minLength={6}
+                      placeholder="Contraseña para el nuevo usuario"
+                      data-testid="new-password"
+                    />
+                  </div>
+                  <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+                    <button type="submit" className="btn-primary" disabled={creating} data-testid="submit-create-user">
+                      {creating ? 'Creando...' : 'Crear Usuario'}
+                    </button>
+                    <button 
+                      type="button" 
+                      className="btn-secondary" 
+                      onClick={() => {
+                        setShowCreateForm(false);
+                        setFormData({ username: '', email: '', password: '' });
+                      }}
+                      data-testid="cancel-create-user"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            <div style={{ background: 'white', borderRadius: '16px', padding: '2rem', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: '600', color: '#1e3a5f' }}>
+                  Total de Usuarios: {usuarios.length}
+                </h2>
+                {!showCreateForm && (
+                  <button 
+                    className="btn-primary" 
+                    onClick={() => setShowCreateForm(true)}
+                    data-testid="show-create-form-btn"
+                  >
+                    + Crear Usuario
+                  </button>
+                )}
+              </div>
 
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
