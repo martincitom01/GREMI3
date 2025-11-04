@@ -467,6 +467,40 @@ async def get_unread_count(current_user: dict = Depends(get_current_user)):
     return {"count": count}
 
 # User management endpoints (Admin only)
+@api_router.post("/users/create", response_model=UserResponse)
+async def create_user(user_data: UserCreate, current_admin: dict = Depends(get_current_admin)):
+    # Check if username exists
+    existing_user = await db.users.find_one({"username": user_data.username})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already exists")
+    
+    # Check if email exists
+    existing_email = await db.users.find_one({"email": user_data.email})
+    if existing_email:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Create user
+    user = User(
+        username=user_data.username,
+        email=user_data.email,
+        password_hash=get_password_hash(user_data.password),
+        role="EMISOR_RECLAMO"
+    )
+    
+    doc = user.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.users.insert_one(doc)
+    
+    return UserResponse(
+        id=user.id,
+        username=user.username,
+        email=user.email,
+        role=user.role,
+        linea_asignada=user.linea_asignada,
+        created_at=user.created_at
+    )
+
 @api_router.get("/users")
 async def get_users(current_admin: dict = Depends(get_current_admin)):
     users = await db.users.find({}, {"_id": 0, "password_hash": 0}).to_list(1000)
@@ -476,6 +510,18 @@ async def get_users(current_admin: dict = Depends(get_current_admin)):
             user['created_at'] = datetime.fromisoformat(user['created_at'])
     
     return users
+
+@api_router.delete("/users/{user_id}")
+async def delete_user(user_id: str, current_admin: dict = Depends(get_current_admin)):
+    # Cannot delete self
+    if user_id == current_admin["id"]:
+        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+    
+    result = await db.users.delete_one({"id": user_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {"message": "User deleted successfully"}
 
 @api_router.patch("/users/{user_id}/assign-line")
 async def assign_line_to_user(user_id: str, linea: str, current_admin: dict = Depends(get_current_admin)):
