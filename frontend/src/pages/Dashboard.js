@@ -146,27 +146,87 @@ const Dashboard = () => {
           background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)', 
           border: '2px solid #3b82f6', 
           borderRadius: '12px', 
-          padding: '1.25rem 1.5rem', 
+          padding: '1.5rem', 
           marginBottom: '2rem',
-          boxShadow: '0 2px 8px rgba(59, 130, 246, 0.1)'
+          boxShadow: '0 4px 12px rgba(59, 130, 246, 0.15)'
         }} data-testid="credentials-card">
-          <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#1e40af', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '1.2rem' }}>🔐</span>
-            Tus Credenciales de Acceso
-          </h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '0.75rem 1.5rem', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.9rem', color: '#475569', fontWeight: '500' }}>Usuario:</span>
-            <span style={{ fontSize: '0.95rem', color: '#1e293b', fontWeight: '600', fontFamily: 'monospace', background: 'white', padding: '0.4rem 0.75rem', borderRadius: '6px', border: '1px solid #cbd5e1' }} data-testid="user-username">
-              {user?.username}
-            </span>
-            <span style={{ fontSize: '0.9rem', color: '#475569', fontWeight: '500' }}>Contraseña:</span>
-            <span style={{ fontSize: '0.85rem', color: '#64748b', fontStyle: 'italic' }}>
-              La contraseña que te fue asignada por el administrador
-            </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+            <div style={{ 
+              width: '50px', 
+              height: '50px', 
+              borderRadius: '12px', 
+              background: 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              fontSize: '1.5rem',
+              boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
+            }}>
+              🔐
+            </div>
+            <div>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '600', color: '#1e40af', marginBottom: '0.25rem' }}>
+                Tus Credenciales de Acceso
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: '#64748b' }}>Información de tu cuenta</p>
+            </div>
           </div>
-          <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.75rem', fontStyle: 'italic' }}>
-            💡 Guarda estas credenciales en un lugar seguro
-          </p>
+          
+          <div style={{ 
+            background: 'white', 
+            borderRadius: '10px', 
+            padding: '1.25rem',
+            border: '1px solid #bfdbfe'
+          }}>
+            <div style={{ marginBottom: '1rem' }}>
+              <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '500', marginBottom: '0.5rem' }}>
+                👤 Nombre de Usuario
+              </div>
+              <div style={{ 
+                fontSize: '1.1rem', 
+                color: '#1e293b', 
+                fontWeight: '700', 
+                fontFamily: 'monospace', 
+                background: '#f8fafc', 
+                padding: '0.75rem 1rem', 
+                borderRadius: '8px',
+                border: '2px solid #e2e8f0',
+                letterSpacing: '0.5px'
+              }} data-testid="user-username">
+                {user?.username}
+              </div>
+            </div>
+            
+            <div>
+              <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: '500', marginBottom: '0.5rem' }}>
+                🔑 Contraseña
+              </div>
+              <div style={{ 
+                fontSize: '0.9rem', 
+                color: '#475569',
+                background: '#fef3c7', 
+                padding: '0.75rem 1rem', 
+                borderRadius: '8px',
+                border: '2px solid #fbbf24',
+                fontStyle: 'italic'
+              }}>
+                La contraseña que te fue asignada por el administrador
+              </div>
+            </div>
+          </div>
+          
+          <div style={{ 
+            marginTop: '1rem', 
+            padding: '0.75rem 1rem', 
+            background: 'rgba(59, 130, 246, 0.1)', 
+            borderRadius: '8px',
+            borderLeft: '4px solid #3b82f6'
+          }}>
+            <p style={{ fontSize: '0.85rem', color: '#1e40af', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span>💡</span>
+              <span><strong>Importante:</strong> Guarda estas credenciales en un lugar seguro. Necesitarás el usuario y contraseña para acceder al sistema.</span>
+            </p>
+          </div>
         </div>
 
         {loading ? (
