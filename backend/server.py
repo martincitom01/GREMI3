@@ -90,6 +90,34 @@ class Notification(BaseModel):
     is_read: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class Invitation(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    token: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    username: str
+    email: EmailStr
+    password: str
+    linea_asignada: Optional[str] = None
+    used: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    expires_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc) + timedelta(days=7))
+
+class InvitationCreate(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
+    linea_asignada: Optional[str] = None
+
+class InvitationResponse(BaseModel):
+    id: str
+    token: str
+    username: str
+    email: str
+    linea_asignada: Optional[str]
+    invitation_link: str
+    expires_at: datetime
+
 class Comment(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     text: str
