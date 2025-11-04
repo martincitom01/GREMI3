@@ -34,9 +34,9 @@ const Login = () => {
               <Train size={40} color="white" />
             </div>
             <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#1e3a5f', marginBottom: '0.5rem' }} data-testid="login-title">
-              Sistema UTA
+              Acceso Emisores
             </h1>
-            <p style={{ color: '#64748b', fontSize: '1rem' }}>Reclamos Gremiales</p>
+            <p style={{ color: '#64748b', fontSize: '1rem' }}>Sistema de Reclamos Gremiales UTA</p>
           </div>
 
           <form onSubmit={handleSubmit} data-testid="login-form">
