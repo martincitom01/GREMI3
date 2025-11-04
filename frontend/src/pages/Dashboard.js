@@ -20,6 +20,7 @@ const LINEAS = [
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { user, logout, getAuthHeaders } = useAuth();
   const [reclamos, setReclamos] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,13 +30,20 @@ const Dashboard = () => {
 
   const cargarReclamos = async () => {
     try {
-      const response = await axios.get(`${API}/reclamos`);
+      const response = await axios.get(`${API}/reclamos`, {
+        headers: getAuthHeaders()
+      });
       setReclamos(response.data);
     } catch (error) {
       console.error('Error cargando reclamos:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
   const contarReclamosPorLinea = (lineaId) => {
