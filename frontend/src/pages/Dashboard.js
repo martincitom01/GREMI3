@@ -20,13 +20,41 @@ const LINEAS = [
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { user, logout, getAuthHeaders } = useAuth();
+  const { user, logout, getAuthHeaders, isAuthenticated } = useAuth();
   const [reclamos, setReclamos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    cargarReclamos();
+    initializeDashboard();
   }, []);
+
+  const initializeDashboard = async () => {
+    // Si no está autenticado, obtener acceso admin automático
+    if (!isAuthenticated) {
+      try {
+        const response = await axios.get(`${API}/admin/access`);
+        const { access_token, user: adminUser } = response.data;
+        localStorage.setItem('token', access_token);
+        localStorage.setItem('isAdmin', 'true');
+        setIsAdmin(true);
+        // Recargar página para actualizar el contexto
+        window.location.reload();
+      } catch (error) {
+        console.error('Error getting admin access:', error);
+      }
+    } else {
+      // Ya está autenticado, verificar si es admin
+      if (user?.role === 'ADMIN') {
+        setIsAdmin(true);
+        localStorage.setItem('isAdmin', 'true');
+      } else if (user?.role === 'EMISOR_RECLAMO') {
+        // Es emisor, verificar si tiene línea asignada
+        setIsAdmin(false);
+      }
+      cargarReclamos();
+    }
+  };
 
   const cargarReclamos = async () => {
     try {
