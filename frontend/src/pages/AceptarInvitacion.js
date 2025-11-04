@@ -29,6 +29,7 @@ const AceptarInvitacion = () => {
       setCredentials({
         username: response.data.username,
         email: response.data.email,
+        password: response.data.password,
         linea: response.data.linea_asignada
       });
     } catch (error) {
