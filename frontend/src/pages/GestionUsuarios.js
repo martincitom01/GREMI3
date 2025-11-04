@@ -25,6 +25,7 @@ const GestionUsuarios = () => {
     password: ''
   });
   const [creating, setCreating] = useState(false);
+  const [showInvitationModal, setShowInvitationModal] = useState(false);
 
   useEffect(() => {
     initializePage();
