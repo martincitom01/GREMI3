@@ -7,7 +7,6 @@ import Administracion from '@/pages/Administracion';
 import DetalleReclamo from '@/pages/DetalleReclamo';
 import Estadisticas from '@/pages/Estadisticas';
 import Login from '@/pages/Login';
-import Register from '@/pages/Register';
 import GestionUsuarios from '@/pages/GestionUsuarios';
 import { Toaster } from '@/components/ui/sonner';
 
