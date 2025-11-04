@@ -362,10 +362,15 @@ async def obtener_reclamos(
     return reclamos
 
 @api_router.get("/reclamos/{reclamo_id}", response_model=Reclamo)
-async def obtener_reclamo(reclamo_id: str):
+async def obtener_reclamo(reclamo_id: str, current_user: dict = Depends(get_current_user)):
     reclamo = await db.reclamos.find_one({"id": reclamo_id}, {"_id": 0})
     if not reclamo:
         raise HTTPException(status_code=404, detail="Reclamo no encontrado")
+    
+    # Verify emisor can only see their own reclamos
+    if current_user["role"] == "EMISOR_RECLAMO":
+        if reclamo.get("creator_id") != current_user["id"]:
+            raise HTTPException(status_code=403, detail="Access denied")
     
     if isinstance(reclamo['fecha_creacion'], str):
         reclamo['fecha_creacion'] = datetime.fromisoformat(reclamo['fecha_creacion'])
