@@ -470,8 +470,71 @@ async def eliminar_reclamo(reclamo_id: str):
         raise HTTPException(status_code=404, detail="Reclamo no encontrado")
     return {"message": "Reclamo eliminado"}
 
+# Notifications endpoints
+@api_router.get("/notifications")
+async def get_notifications(current_user: dict = Depends(get_current_user)):
+    notifications = await db.notifications.find(
+        {"user_id": current_user["id"]},
+        {"_id": 0}
+    ).sort('created_at', -1).to_list(100)
+    
+    for notif in notifications:
+        if isinstance(notif['created_at'], str):
+            notif['created_at'] = datetime.fromisoformat(notif['created_at'])
+    
+    return notifications
+
+@api_router.patch("/notifications/{notification_id}/read")
+async def mark_notification_read(notification_id: str, current_user: dict = Depends(get_current_user)):
+    result = await db.notifications.update_one(
+        {"id": notification_id, "user_id": current_user["id"]},
+        {"$set": {"is_read": True}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Notification not found")
+    return {"message": "Notification marked as read"}
+
+@api_router.get("/notifications/unread/count")
+async def get_unread_count(current_user: dict = Depends(get_current_user)):
+    count = await db.notifications.count_documents({"user_id": current_user["id"], "is_read": False})
+    return {"count": count}
+
+# User management endpoints (Admin only)
+@api_router.get("/users")
+async def get_users(current_admin: dict = Depends(get_current_admin)):
+    users = await db.users.find({}, {"_id": 0, "password_hash": 0}).to_list(1000)
+    
+    for user in users:
+        if isinstance(user['created_at'], str):
+            user['created_at'] = datetime.fromisoformat(user['created_at'])
+    
+    return users
+
+@api_router.patch("/users/{user_id}/assign-line")
+async def assign_line_to_user(user_id: str, linea: str, current_admin: dict = Depends(get_current_admin)):
+    result = await db.users.update_one(
+        {"id": user_id},
+        {"$set": {"linea_asignada": linea}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"message": f"Line {linea} assigned to user"}
+
+@api_router.patch("/users/{user_id}/role")
+async def change_user_role(user_id: str, role: str, current_admin: dict = Depends(get_current_admin)):
+    if role not in ["ADMIN", "EMISOR_RECLAMO"]:
+        raise HTTPException(status_code=400, detail="Invalid role")
+    
+    result = await db.users.update_one(
+        {"id": user_id},
+        {"$set": {"role": role}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"message": f"Role updated to {role}"}
+
 @api_router.get("/estadisticas", response_model=EstadisticasResponse)
-async def obtener_estadisticas():
+async def obtener_estadisticas(current_user: dict = Depends(get_current_user)):
     reclamos = await db.reclamos.find({}, {"_id": 0}).to_list(10000)
     
     total = len(reclamos)
