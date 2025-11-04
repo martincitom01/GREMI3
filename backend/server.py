@@ -590,9 +590,6 @@ async def accept_invitation(token: str):
     if not invitation:
         raise HTTPException(status_code=404, detail="Invitation not found")
     
-    if invitation['used']:
-        raise HTTPException(status_code=400, detail="Invitation already used")
-    
     # Check expiration
     expires_at = invitation['expires_at']
     if isinstance(expires_at, str):
@@ -601,7 +598,33 @@ async def accept_invitation(token: str):
     if datetime.now(timezone.utc) > expires_at:
         raise HTTPException(status_code=400, detail="Invitation expired")
     
-    # Create user
+    # Check if user already exists
+    existing_user = await db.users.find_one({"username": invitation['username']}, {"_id": 0})
+    
+    if existing_user:
+        # User already exists, just authenticate them
+        if isinstance(existing_user['created_at'], str):
+            existing_user['created_at'] = datetime.fromisoformat(existing_user['created_at'])
+        
+        # Create access token
+        access_token = create_access_token(data={"sub": existing_user["id"]})
+        
+        user_response = UserResponse(
+            id=existing_user["id"],
+            username=existing_user["username"],
+            email=existing_user["email"],
+            role=existing_user["role"],
+            linea_asignada=existing_user.get("linea_asignada"),
+            created_at=existing_user["created_at"]
+        )
+        
+        return TokenResponse(
+            access_token=access_token,
+            token_type="bearer",
+            user=user_response
+        )
+    
+    # Create new user
     user = User(
         username=invitation['username'],
         email=invitation['email'],
@@ -615,7 +638,7 @@ async def accept_invitation(token: str):
     
     await db.users.insert_one(doc)
     
-    # Mark invitation as used
+    # Mark invitation as used (for tracking purposes only)
     await db.invitations.update_one({"token": token}, {"$set": {"used": True}})
     
     # Create access token
