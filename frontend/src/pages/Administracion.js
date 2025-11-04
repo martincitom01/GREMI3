@@ -24,6 +24,7 @@ const ESTADOS = ['', 'Pendiente', 'En gestión', 'En negociación', 'Resuelto'];
 
 const Administracion = () => {
   const navigate = useNavigate();
+  const { getAuthHeaders, user } = useAuth();
   const [searchParams] = useSearchParams();
   const [reclamos, setReclamos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,12 +42,15 @@ const Administracion = () => {
   const cargarReclamos = async () => {
     try {
       const params = {};
-      if (filters.linea) params.linea = filters.linea;
+      if (filters.linea && user?.role === 'ADMIN') params.linea = filters.linea;
       if (filters.categoria) params.categoria = filters.categoria;
       if (filters.estado) params.estado = filters.estado;
       if (filters.search) params.search = filters.search;
 
-      const response = await axios.get(`${API}/reclamos`, { params });
+      const response = await axios.get(`${API}/reclamos`, { 
+        params,
+        headers: getAuthHeaders()
+      });
       setReclamos(response.data);
     } catch (error) {
       console.error('Error cargando reclamos:', error);
