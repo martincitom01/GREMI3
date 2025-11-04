@@ -364,6 +364,13 @@ Usuario creado exitosamente:
             </div>
           </div>
         )}
+
+        <GenerarInvitacionModal
+          isOpen={showInvitationModal}
+          onClose={() => setShowInvitationModal(false)}
+          onSuccess={cargarUsuarios}
+          getAuthHeaders={getAuthHeaders}
+        />
       </div>
     </div>
   );
