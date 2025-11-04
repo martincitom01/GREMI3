@@ -9,6 +9,7 @@ const API = `${BACKEND_URL}/api`;
 
 const Estadisticas = () => {
   const navigate = useNavigate();
+  const { getAuthHeaders, user } = useAuth();
   const [estadisticas, setEstadisticas] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -18,7 +19,9 @@ const Estadisticas = () => {
 
   const cargarEstadisticas = async () => {
     try {
-      const response = await axios.get(`${API}/estadisticas`);
+      const response = await axios.get(`${API}/estadisticas`, {
+        headers: getAuthHeaders()
+      });
       setEstadisticas(response.data);
     } catch (error) {
       console.error('Error cargando estadísticas:', error);
