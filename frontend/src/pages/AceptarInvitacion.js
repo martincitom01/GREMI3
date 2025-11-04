@@ -36,9 +36,10 @@ const AceptarInvitacion = () => {
       const response = await axios.post(`${API}/invitations/${token}/accept`);
       const { access_token } = response.data;
       localStorage.setItem('token', access_token);
+      localStorage.removeItem('adminInitialized'); // Ensure not treated as admin
       toast.success('¡Cuenta activada exitosamente!');
       setTimeout(() => {
-        navigate('/');
+        window.location.href = '/'; // Force reload to load as emisor
       }, 1500);
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Error al activar la cuenta');
