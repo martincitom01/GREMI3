@@ -14,6 +14,8 @@ const AceptarInvitacion = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [accepting, setAccepting] = useState(false);
+  const [accepted, setAccepted] = useState(false);
+  const [credentials, setCredentials] = useState(null);
 
   useEffect(() => {
     loadInvitation();
@@ -23,6 +25,12 @@ const AceptarInvitacion = () => {
     try {
       const response = await axios.get(`${API}/invitations/${token}`);
       setInvitation(response.data);
+      // Save credentials for later display
+      setCredentials({
+        username: response.data.username,
+        email: response.data.email,
+        linea: response.data.linea_asignada
+      });
     } catch (error) {
       setError(error.response?.data?.detail || 'Invitación no válida o expirada');
     } finally {
@@ -33,19 +41,17 @@ const AceptarInvitacion = () => {
   const handleAccept = async () => {
     setAccepting(true);
     try {
-      const response = await axios.post(`${API}/invitations/${token}/accept`);
-      const { access_token } = response.data;
-      localStorage.setItem('token', access_token);
-      localStorage.removeItem('adminInitialized'); // Ensure not treated as admin
+      await axios.post(`${API}/invitations/${token}/accept`);
+      setAccepted(true);
       toast.success('¡Cuenta activada exitosamente!');
-      setTimeout(() => {
-        window.location.href = '/'; // Force reload to load as emisor
-      }, 1500);
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Error al activar la cuenta');
-    } finally {
       setAccepting(false);
     }
+  };
+
+  const handleGoToLogin = () => {
+    navigate('/emisor-login');
   };
 
   if (loading) {
