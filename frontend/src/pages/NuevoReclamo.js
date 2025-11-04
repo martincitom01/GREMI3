@@ -95,15 +95,18 @@ const NuevoReclamo = () => {
 
     try {
       // Crear reclamo
-      const response = await axios.post(`${API}/reclamos`, formData);
+      const response = await axios.post(`${API}/reclamos`, formData, {
+        headers: getAuthHeaders()
+      });
       const reclamoId = response.data.id;
 
       // Subir archivos
       for (const archivo of archivos) {
-        const formData = new FormData();
-        formData.append('file', archivo);
-        await axios.post(`${API}/reclamos/${reclamoId}/archivos`, formData, {
+        const formDataFile = new FormData();
+        formDataFile.append('file', archivo);
+        await axios.post(`${API}/reclamos/${reclamoId}/archivos`, formDataFile, {
           headers: {
+            ...getAuthHeaders(),
             'Content-Type': 'multipart/form-data'
           }
         });
@@ -115,7 +118,7 @@ const NuevoReclamo = () => {
       }, 1500);
     } catch (error) {
       console.error('Error creando reclamo:', error);
-      toast.error('Error al crear el reclamo');
+      toast.error(error.response?.data?.detail || 'Error al crear el reclamo');
     } finally {
       setSubmitting(false);
     }
