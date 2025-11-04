@@ -130,15 +130,22 @@ const Dashboard = () => {
         <h1 style={{ fontSize: '2.5rem', fontWeight: '700', color: '#1e3a5f', marginBottom: '0.5rem' }} data-testid="dashboard-title">
           Panel Principal
         </h1>
+        {user?.role === 'EMISOR_RECLAMO' && !user?.linea_asignada && (
+          <div style={{ background: '#fef3c7', border: '2px solid #fbbf24', borderRadius: '12px', padding: '1rem 1.5rem', marginBottom: '2rem' }}>
+            <p style={{ color: '#92400e', fontSize: '0.95rem', fontWeight: '500' }}>
+              ⚠️ Tu cuenta aún no tiene una línea asignada. Contacta al administrador para que te asigne una línea.
+            </p>
+          </div>
+        )}
         <p style={{ fontSize: '1.1rem', color: '#64748b', marginBottom: '2rem' }}>
-          Seleccione una línea para ver los reclamos gremiales
+          {user?.role === 'ADMIN' ? 'Seleccione una línea para ver los reclamos gremiales' : 'Tus reclamos'}
         </p>
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>Cargando...</div>
         ) : (
           <div className="lineas-grid">
-            {LINEAS.map((linea) => (
+            {lineasVisibles.map((linea) => (
               <div
                 key={linea.id}
                 className="linea-card"
