@@ -14,7 +14,7 @@ const LINEAS = ['A', 'B', 'C', 'D', 'E', 'H', 'Premetro'];
 
 const GestionUsuarios = () => {
   const navigate = useNavigate();
-  const { getAuthHeaders, user: currentUser } = useAuth();
+  const { getAuthHeaders, user: currentUser, isAuthenticated } = useAuth();
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -26,8 +26,22 @@ const GestionUsuarios = () => {
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
-    cargarUsuarios();
+    initializePage();
   }, []);
+
+  const initializePage = async () => {
+    if (!isAuthenticated && !localStorage.getItem('token')) {
+      try {
+        const response = await axios.get(`${API}/admin/access`);
+        localStorage.setItem('token', response.data.access_token);
+        window.location.reload();
+      } catch (error) {
+        console.error('Error getting admin access:', error);
+      }
+    } else {
+      cargarUsuarios();
+    }
+  };
 
   const cargarUsuarios = async () => {
     try {
