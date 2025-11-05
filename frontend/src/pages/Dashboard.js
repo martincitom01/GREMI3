@@ -25,6 +25,7 @@ const Dashboard = () => {
   const [reclamos, setReclamos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   useEffect(() => {
     initializeDashboard();
