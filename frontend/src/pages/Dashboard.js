@@ -104,6 +104,14 @@ const Dashboard = () => {
               <span style={{ color: 'white', fontSize: '0.9rem', fontWeight: '500' }}>{user?.username}</span>
               <span style={{ color: '#bfdbfe', fontSize: '0.8rem' }}>({user?.role === 'ADMIN' ? 'Admin' : 'Emisor'})</span>
             </div>
+            <button 
+              className="nav-button" 
+              onClick={() => setShowPasswordModal(true)}
+              data-testid="change-password-btn"
+              title="Cambiar Contraseña"
+            >
+              <Key size={16} />
+            </button>
             <NotificationBell />
             <button 
               className="nav-button active" 
