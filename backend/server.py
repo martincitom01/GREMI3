@@ -297,6 +297,33 @@ async def get_me(current_user: dict = Depends(get_current_user)):
     
     return UserResponse(**current_user)
 
+@api_router.patch("/users/me/password")
+async def change_own_password(password_data: ChangePasswordRequest, current_user: dict = Depends(get_current_user)):
+    # Get user with password hash
+    user = await db.users.find_one({"id": current_user["id"]})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Verify current password
+    if not verify_password(password_data.current_password, user["password_hash"]):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    
+    # Validate new password
+    if len(password_data.new_password) < 6:
+        raise HTTPException(status_code=400, detail="New password must be at least 6 characters")
+    
+    if password_data.new_password == password_data.current_password:
+        raise HTTPException(status_code=400, detail="New password must be different from current password")
+    
+    # Update password
+    new_password_hash = get_password_hash(password_data.new_password)
+    await db.users.update_one(
+        {"id": current_user["id"]},
+        {"$set": {"password_hash": new_password_hash}}
+    )
+    
+    return {"message": "Password changed successfully"}
+
 @api_router.post("/reclamos", response_model=Reclamo)
 async def crear_reclamo(input: ReclamoCreate, current_user: dict = Depends(get_current_user)):
     # Verify emisor can only create reclamos for their assigned linea
