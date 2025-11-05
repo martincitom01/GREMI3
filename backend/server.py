@@ -12,7 +12,7 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, timezone, timedelta
 import shutil
-import jwt
+from jose import jwt, JWTError
 from passlib.context import CryptContext
 
 ROOT_DIR = Path(__file__).parent
