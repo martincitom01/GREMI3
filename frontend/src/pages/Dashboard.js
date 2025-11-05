@@ -320,6 +320,12 @@ const Dashboard = () => {
           </div>
         )}
       </div>
+
+      <CambiarPasswordModal
+        isOpen={showPasswordModal}
+        onClose={() => setShowPasswordModal(false)}
+        getAuthHeaders={getAuthHeaders}
+      />
     </div>
   );
 };
